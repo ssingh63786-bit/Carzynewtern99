@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CallingApp - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;color:white}
+    .birthday-top{text-align:center;padding:40px 20px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px)}
+    .birthday-top h1{font-family:'Dancing Script',cursive;font-size:48px;margin:10px 0}
+    .emoji{font-size:60px;animation:bounce 2s infinite}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+    .container{padding:40px 20px;text-align:center}
+    .welcome{font-size:32px;margin:20px 0;font-weight:600}
+    .user-name{font-size:38px;font-weight:700;color:#ffd700}
+    .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1000px;margin:50px auto}
+    .card{background:rgba(255,255,255,0.2);padding:30px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);transition:0.3s}
+    .card:hover{transform:translateY(-10px);background:rgba(255,255,255,0.3)}
+    .icon{font-size:50px}
+    .call-btn{margin:40px auto;padding:20px 60px;font-size:22px;background:#ffd700;color:#333;border:none;border-radius:50px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+    .call-btn:hover{background:#ffed4e;transform:scale(1.05)}
+    .logout{position:fixed;bottom:30px;right:30px;padding:15px 30px;background:rgba(0,0,0,0.5);border:2px solid white;color:white;border-radius:50px;cursor:pointer}
+  </style>
+</head>
+<body>
+
+  <div class="birthday-top">
+    <div class="emoji">🎉🎂🥳🎈</div>
+    <h1>Happy Birthday</h1>
+    <p>Buro Das</p>
+    <p>Aaj ka din tumhara hai! 🎉</p>
+  </div>
+
+  <div class="container">
+    <h2 class="welcome">Welcome to CallingApp</h2>
+    <p class="user-name" id="userName">Loading...</p>
+
+    <div class="features">
+      <div class="card"><div class="icon">📞</div><h3>Free Calls</h3><p>Crystal clear voice calling</p></div>
+      <div class="card"><div class="icon">🎥</div><h3>Video Calls</h3><p>HD video with friends</p></div>
+      <div class="card"><div class="icon">💬</div><h3>Chat</h3><p>Text, photos, voice notes</p></div>
+      <div class="card"><div class="icon">🎁</div><h3>Special Day</h3><p>Buro Das ko wish karo!</p></div>
+    </div>
+
+    <button class="call-btn" onclick="alert('Calling feature coming soon! 🚀')">📞 Start Calling</button>
+  </div>
+
+  <button class="logout" onclick="logout()">Logout</button>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBpikn04jkL6MTgt5Bxdx_aLtocgXnbiok",
+  authDomain: "callingapp-e12d3.firebaseapp.com",
+  projectId: "callingapp-e12d3",
+  storageBucket: "callingapp-e12d3.firebasestorage.app",
+  messagingSenderId: "214822517082",
+  appId: "1:214822517082:web:d3d25622ff260ceb7adb63",
+  measurementId: "G-VCR2K48RE5"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Agar user logged in nahi to login pe bhejo
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    const name = user.displayName || user.email.split('@')[0] || "Guest";
+    document.getElementById('userName').textContent = name + " 🎉";
+  }
+});
+
+function logout() {
+  auth.signOut().then(() => window.location.href = "login.html");
+}
+</script>
+</body>
+</html>

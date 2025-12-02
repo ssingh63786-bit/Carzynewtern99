@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CallingApp - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      min-height:100vh;
+      padding:20px 0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    #app{
+      width:100%;max-width:420px;
+      background:white;
+      border-radius:30px;
+      overflow:hidden;
+      box-shadow:0 30px 80px rgba(0,0,0,0.4);
+    }
+    .header{
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      padding:80px 30px 50px;
+      text-align:center;
+      color:white;
+    }
+    .header h1{font-size:48px;font-weight:700}
+    .header p{margin-top:10px;font-size:16px;opacity:0.9}
+    .form-card{
+      margin-top:-50px;
+      background:white;
+      border-radius:30px;
+      padding:40px 30px;
+    }
+    .input-group{margin:20px 0}
+    .input-group input{
+      width:100%;padding:18px 20px;
+      border:2px solid #eee;
+      border-radius:20px;
+      font-size:16px;
+    }
+    .input-group input:focus{
+      outline:none;
+      border-color:#667eea;
+      box-shadow:0 0 0 4px rgba(102,126,234,0.15);
+    }
+    .btn{
+      width:100%;padding:18px;
+      border:none;border-radius:20px;
+      font-size:17px;font-weight:600;
+      cursor:pointer;margin:15px 0;
+    }
+    .btn-primary{background:#667eea;color:white}
+    .btn-google{background:#fff;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;gap:15px}
+    .btn-google img{width:22px}
+    .divider{margin:30px 0;text-align:center;position:relative;color:#aaa}
+    .divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#eee}
+    .divider span{background:white;padding:0 25px}
+    .auth-link{text-align:center;margin:25px 0;color:#666}
+    .auth-link span{color:#667eea;font-weight:600;cursor:pointer}
+    .error{color:red;font-size:14px;margin:10px 0;text-align:center;height:20px}
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <h1>CallingApp</h1>
+    <p>Connect with friends instantly</p>
+  </div>
+
+  <div class="form-card">
+    <!-- Signup Form -->
+    <div id="signup-form">
+      <div class="input-group"><input type="text" id="signup-name" placeholder="Full Name" required></div>
+      <div class="input-group"><input type="email" id="signup-email" placeholder="Email" required></div>
+      <div class="input-group"><input type="password" id="signup-password" placeholder="Password" required></div>
+      <div class="error" id="signup-error"></div>
+      <button class="btn btn-primary" onclick="signup()">Create Account</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-form" style="display:none">
+      <div class="input-group"><input type="email" id="login-email" placeholder="Email" required></div>
+      <div class="input-group"><input type="password" id="login-password" placeholder="Password" required></div>
+      <div class="error" id="login-error"></div>
+      <button class="btn btn-primary" onclick="login()">Login</button>
+    </div>
+
+    <div class="divider"><span>OR</span></div>
+
+    <button class="btn btn-google" onclick="googleLogin()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"> Continue with Google
+    </button>
+
+    <button class="btn" style="background:#f0f0f0" onclick="guestLogin()">Continue as Guest</button>
+
+    <div class="auth-link">
+      <span id="toggle-text">Already have an account? <span onclick="toggleForm()">Login</span></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBpikn04jkL6MTgt5Bxdx_aLtocgXnbiok",
+  authDomain: "callingapp-e12d3.firebaseapp.com",
+  projectId: "callingapp-e12d3",
+  storageBucket: "callingapp-e12d3.firebasestorage.app",
+  messagingSenderId: "214822517082",
+  appId: "1:214822517082:web:d3d25622ff260ceb7adb63",
+  measurementId: "G-VCR2K48RE5"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Yeh sabse important — login hote hi home.html pe bhej dega
+auth.onAuthStateChanged(user => {
+  if (user) {
+    window.location.href = "home.html"; // ← Automatic home page khulega
+  }
+});
+
+function toggleForm() {
+  const signup = document.getElementById('signup-form');
+  const login = document.getElementById('login-form');
+  const text = document.getElementById('toggle-text');
+  if (login.style.display === 'none') {
+    login.style.display = 'block';
+    signup.style.display = 'none';
+    text.innerHTML = 'New here? <span onclick="toggleForm()">Create Account</span>';
+  } else {
+    login.style.display = 'none';
+    signup.style.display = 'block';
+    text.innerHTML = 'Already have an account? <span onclick="toggleForm()">Login</span>';
+  }
+}
+
+function signup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-password').value;
+  if (!name || !email || !pass) return showError('signup-error', 'Fill all fields!');
+  
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(cred => cred.user.updateProfile({ displayName: name }))
+    .catch(err => showError('signup-error', err.message));
+}
+
+function login() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-password').value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(err => showError('login-error', err.message || 'Wrong credentials!'));
+}
+
+function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider);
+}
+
+function guestLogin() {
+  auth.signInAnonymously();
+}
+
+function showError(id, msg) {
+  document.getElementById(id).textContent = msg;
+  setTimeout(() => document.getElementById(id).textContent = '', 5000);
+}
+</script>
+</body>
+</html>
